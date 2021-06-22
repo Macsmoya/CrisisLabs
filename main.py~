@@ -10,4 +10,4 @@ UDPClientSocket.sendto(b"connect", serverAddressPort)
 while True:
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)
     msg = msgFromServer[0].decode()
-    # Testing
+    # do stuff with message
