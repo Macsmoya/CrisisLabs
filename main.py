@@ -11,24 +11,21 @@ UDPClientSocket.sendto(b"connect", serverAddressPort)
 
 datapoints = []
 timestamps = []
-for x in range (10):
+for x in range (1000):
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)
     msg = msgFromServer[0].decode()
     msg = msg[1:-1].split(', ')
     # Testing
     data = msg[2:-1]
-    print(data)
-    datapoints.append(msg[2])
-    timestamps.append(x)
-plt.plot(timestamps, datapoints)    
+    print(msg[0])
+    if msg[0] == "'ENN'":
+        
+        datapoints.append(int(msg[2]))
+        timestamps.append(int(x))
 
-# naming the x axis
-plt.xlabel('x - axis')
-# naming the y axis
-plt.ylabel('y - axis')
-
-# giving a title to my graph
-plt.title('My first graph!')
-  
-# function to show the plot
+y = datapoints #datapoints
+x = timestamps
+fig3, ax3 = plt.subplots()
+ax3.plot(x, y, color='k')
+ax3.autoscale(enable=True, axis="y", tight=False)
 plt.show()
