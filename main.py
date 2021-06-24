@@ -17,15 +17,5 @@ for x in range (100):
     msg = msg[1:-1].split(', ')
     # Testing
     data = msg[2:-1]
-    print(msg[0])
-    if msg[0] == "'ENN'":
-        
-        datapoints.append(int(msg[2]))
-        timestamps.append(int(x))
-
-y = datapoints #datapoints
-x = timestamps
-fig3, ax3 = plt.subplots()
-ax3.plot(x, y, color='k')
-ax3.autoscale(enable=True, axis="y", tight=False)
-plt.show()
+    csv_lst = [x for x in enumerate(data)]
+    print(csv_lst)
