@@ -5,11 +5,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 import csv
+from dash_bootstrap_templates import load_figure_template
 
+load_figure_template("lux")
 app = dash.Dash(
     __name__,
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-    external_stylesheets=[dbc.themes.BOOTSTRAP]
+    external_stylesheets=[dbc.themes.LUX]
 )
 
 
@@ -21,8 +23,39 @@ def _create_fig():
             x=df['x'],
             y=df['y']))
 
+first_card = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H5("Graph", className="card-title"),
+            html.P("Enn"),
+            dbc.Button("Go somewhere", color="primary"),
+        ]
+    )
+)
+
+
+navbar = dbc.NavbarSimple(
+    children=[
+        dbc.NavItem(dbc.NavLink("Page 1", href="#")),
+        dbc.DropdownMenu(
+            children=[
+                dbc.DropdownMenuItem("More pages", header=True),
+                dbc.DropdownMenuItem("Page 2", href="#"),
+                dbc.DropdownMenuItem("Page 3", href="#"),
+            ],
+            nav=True,
+            in_navbar=True,
+            label="More",
+        ),
+    ],
+    brand="Raspberry shake demo",
+    brand_href="#",
+    color="primary",
+    dark=True,
+)
 
 app.layout = html.Div([
+    navbar,
     html.Div(
         [
             html.Div(

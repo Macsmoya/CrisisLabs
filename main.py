@@ -18,4 +18,4 @@ for x in range (100):
     # Testing
     data = msg[2:-1]
     csv_lst = [x for x in enumerate(data)]
-    print(csv_lst)
+    print(msg)
