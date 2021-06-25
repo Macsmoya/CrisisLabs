@@ -15,32 +15,48 @@ app = dash.Dash(
 )
 
 
-def _create_fig():
-    df = pd.read_csv('data.csv') #Data frame
-    df.columns=['x','y']
-    return go.Figure(
-        data=go.Scatter(
-            x=df['x'],
-            y=df['y']))
+def _create_fig(): #Create graph 
+    df = pd.read_csv('data.csv') #Read data from data.csv
+    df.columns=['x','y']         
+    layout = go.Layout(
+                        title = {
+                                 'text':'Graph',
+                                 'xanchor':'center'
+                                },
+                        xaxis = {
+                                 'title':'Time'
+                                },
+                        yaxis = {
+                                 'title':'Counts'
+                                },
+                        autosize = True
+                       )
+    return go.Figure(data=go.Scatter(
+                                     x=df['x'],
+                                     y=df['y'],
+                                     ), 
+                     layout = layout
+                     )
 
-first_card = dbc.Card(
+first_card = dbc.Card( 
     dbc.CardBody(
         [
-            html.H5("Graph", className="card-title"),
-            html.P("Enn"),
-            dbc.Button("Go somewhere", color="primary"),
+            html.H4("Card ig", className="card-title"),
+            html.H6("By WC1", className="card-subtitle"),
+            html.P("Enn", className = "card-text"),
         ]
-    )
+    ),
+
 )
 
 
 navbar = dbc.NavbarSimple(
     children=[
-        dbc.NavItem(dbc.NavLink("Page 1", href="#")),
+        dbc.NavItem(dbc.NavLink("Github", href="https://github.com/Macsmoya/CrisisLabs")),
         dbc.DropdownMenu(
             children=[
                 dbc.DropdownMenuItem("More pages", header=True),
-                dbc.DropdownMenuItem("Page 2", href="#"),
+                dbc.DropdownMenuItem("follow me on twitter", href="#"),
                 dbc.DropdownMenuItem("Page 3", href="#"),
             ],
             nav=True,
@@ -54,27 +70,45 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
+
 app.layout = html.Div([
     navbar,
-    html.Div(
-        [
-            html.Div(
-                [
-                    html.H2("Raspberry shake data"),
-                    html.P("By Yohan Kanji, Max Moir, Aston Varga and Dev Shamihoke"),
-                ],
-                className = "header-left",
-                    )
-         ]),   
-        
-    dcc.Graph(
-        id='g1',
-        figure=_create_fig()),
-    dcc.Interval(
-        id='interval-component',
-        interval=1*1000, # in milliseconds
-        n_intervals=0
-    )
+    html.Br(),
+    dbc.Row(
+            [
+                dbc.Col(html.Div(), width=1),
+                dbc.Col(first_card, width=4),
+                dbc.Col(html.Div(), width=1),
+                dbc.Col(first_card, width=4),
+                dbc.Col(html.Div(), width=1),
+
+            ],
+
+        ),
+    html.Hr(),
+    dbc.Row(
+            [
+                dbc.Col(html.Div(), width=1),
+                dcc.Graph(
+                    id='g1',
+                    figure=_create_fig()),
+                dcc.Interval(
+                    id='interval-component',
+                    interval=1*1000, # in milliseconds
+                    n_intervals=0
+                            ),
+                dbc.Col(
+                    html.Div(
+                             
+                             ),
+                    width=1,
+                    style= {"height":"500px"},
+                        ),
+
+            ],
+
+        ),
+    
 ])
 
 
