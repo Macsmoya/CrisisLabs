@@ -16,7 +16,7 @@ app = dash.Dash(
 
 
 def _create_fig(): #Create graph 
-    df = pd.read_csv('data.csv') #Read data from data.csv
+    df = pd.read_csv('data/data.csv') #Read data from data.csv
     df.columns=['x','y']         
     layout = go.Layout(
                         title = {

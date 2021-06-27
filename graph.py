@@ -4,9 +4,9 @@ import time
 import random
 import math as maths
 
-filename = "data.csv"
+FILENAME = "data/data.csv"
 # opening the file with w+ mode truncates the file
-f = open(filename, "w+")
+f = open(FILENAME, "w+")
 f.close()
 
 
@@ -18,9 +18,9 @@ def append_list_as_row(file_name, list_of_elem):
         csv_writer = writer(write_obj)
         # Add contents of list as last row in the csv file
         csv_writer.writerow(list_of_elem)
-append_list_as_row("data.csv", [0, 0])
+append_list_as_row(FILENAME, [0, 0])
 for x in range(1, 100):
     time.sleep(.2)
-    append_list_as_row('data.csv', [x, maths.sin(x)])
+    append_list_as_row(FILENAME, [x, maths.sin(x)])
     
     
