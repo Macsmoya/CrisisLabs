@@ -46,7 +46,8 @@ first_card = dbc.Card(
             html.P("Enn", className = "card-text"),
         ]
     ),
-
+    color = "dark",
+    outline = True
 )
 
 
@@ -78,38 +79,39 @@ app.layout = html.Div([
             [
                 dbc.Col(html.Div(), width=1),
                 dbc.Col(first_card, width=4),
-                dbc.Col(html.Div(), width=1),
+                dbc.Col(html.Div(), width=2),
                 dbc.Col(first_card, width=4),
                 dbc.Col(html.Div(), width=1),
 
             ],
 
         ),
-    html.Hr(),
+    html.Br(),
+    
     dbc.Row(
             [
                 dbc.Col(html.Div(), width=1),
-                dcc.Graph(
-                    id='g1',
-                    figure=_create_fig()),
-                dcc.Interval(
-                    id='interval-component',
-                    interval=1*1000, # in milliseconds
-                    n_intervals=0
-                            ),
                 dbc.Col(
-                    html.Div(
-                             
-                             ),
-                    width=1,
-                    style= {"height":"500px"},
-                        ),
+                        html.Div([
+                                dcc.Graph(
+                                    id='g1',
+                                    figure=_create_fig()),
+                                dcc.Interval(
+                                    id='interval-component',
+                                    interval=1*500, # in milliseconds
+                                    n_intervals=0
+                                            ),
+                                ]),
+                        width =10,
+                        className = "bg-light border border-dark"
+                        )
+
 
             ],
 
-        ),
+           ),
     
-])
+], className = "bg-secondary")
 
 
 @app.callback(
