@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 import csv
 from dash_bootstrap_templates import load_figure_template
 import layouts
+
 load_figure_template("lux")
 app = dash.Dash(
     __name__,
@@ -41,34 +42,22 @@ def _create_fig(): #Create graph
 
 
 app.layout = html.Div([
-             layouts.navbar,
-             html.Br(),
-             dbc.Row([
-                dbc.Col(html.Div(), width=1),
-                dbc.Col(layouts.first_card, width=4),
-                dbc.Col(html.Div(), width=2),
-                dbc.Col(layouts.first_card, width=4),
-                dbc.Col(html.Div(), width=1),
-            ]),
-            html.Br(),
-            dbc.Row([
-                dbc.Col(html.Div(), width=1),
-                dbc.Col(
-                    html.Div([
-                        dcc.Graph(
-                            id='g1',
-                            figure=_create_fig()),
-                        dcc.Interval(
-                            id='interval-component',
-                            interval=1*500, # in milliseconds
-                            n_intervals=0
-                        ),
-                    ]),
-                width =10,
-                className = "bg-light border border-dark"
-                )
-            ]),
-], className = "bg-secondary")
+                layouts.navbar,
+                html.Br(),
+                
+                dbc.Row([
+                    dbc.Col(html.Div(), width=1),
+                    dbc.Col(layouts.first_card, width=4),
+                    dbc.Col(html.Div(), width=2),
+                    dbc.Col(layouts.first_card, width=4),
+                    dbc.Col(html.Div(), width=1),
+                ]),
+                
+                html.Br(),
+                layouts.graph_row,
+                ],
+                className = "bg-secondary"
+)
 
 
 @app.callback(
