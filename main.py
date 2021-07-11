@@ -12,7 +12,9 @@ UDPClientSocket.sendto(b"connect", serverAddressPort)
 datapoints = []
 timestamps = []
 for x in range (100):
+    print(x)
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)
+    print(x)
     msg = msgFromServer[0].decode()
     msg = msg[1:-1].split(', ')
     # Testing
