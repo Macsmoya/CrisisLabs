@@ -4,6 +4,7 @@ import random
 import math as maths
 import socket
 import numpy as np
+import pandas as pd
 
 serverAddressPort = ("152.67.115.238", 20001)
 bufferSize = 1024
@@ -12,12 +13,22 @@ UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.sendto(b"connect", serverAddressPort)
 
 
-FILENAME = "data/data.csv"
-# opening the file with w+ mode truncates the file
-f = open(FILENAME, "w+")
-f.close()
+class Channel():
+    def __init__(self, name):
+        self.name = name
+        self.path = "data/" + name + ".csv"
+        self.datapoints = 0
+        self.create_clear()
+        self.add_value(0)
+        
+    def create_clear(self):
+        f = open(self.path, "w+")
+        f.close()
 
-
+    def add_value(self, elem):
+        append_list_as_row(self.path, [self.datapoints, elem])
+        self.datapoints += 1
+        
 
 def append_list_as_row(file_name, list_of_elem):
     # Open file in append mode
@@ -26,19 +37,27 @@ def append_list_as_row(file_name, list_of_elem):
         csv_writer = writer(write_obj)
         # Add contents of list as last row in the csv file
         csv_writer.writerow(list_of_elem)
-
-append_list_as_row(FILENAME, [0, 0])
-
-for i in range (100):
+        
+def getMsg():
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)
     msg = msgFromServer[0].decode()
+    msg = msg.replace("'", "")
     msg = msg[1:-1].split(', ')
-    # Testing
-    data = msg[2:-1]
-    csv_lst = [x for x in enumerate(data)]
-    print(msg)
-    if msg[0] == "'ENN'":
-        append_list_as_row(FILENAME, (i, msg[3]))
+    return msg
+        
+def main():
+    channels = [ Channel(channel_name) for channel_name in ['ENN', 'ENZ', 'EHZ', 'ENE']]
+    for channel in channels:
+        print(channel.name)
+        
+    running = True
+    while running == True:
+        msg = getMsg()
+        for channel in channels:
+            if channel.name == msg[0]:
+                channel.add_value(msg[3])
+                print(msg[3])
+main()    
         
     
     
