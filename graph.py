@@ -29,7 +29,7 @@ def append_list_as_row(file_name, list_of_elem):
 
 append_list_as_row(FILENAME, [0, 0])
 
-for x in range (100):
+for i in range (100):
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)
     msg = msgFromServer[0].decode()
     msg = msg[1:-1].split(', ')

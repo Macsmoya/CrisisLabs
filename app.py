@@ -16,12 +16,12 @@ app = dash.Dash(
 )
 
 
-def _create_fig(): #Create graph 
+def _create_fig(title): #Create graph 
     df = pd.read_csv('data/data.csv') #Read data from data.csv
     df.columns=['x','y']         
     layout = go.Layout(
                         title = {
-                                 'text':'Graph',
+                                 'text':title,
                                  'xanchor':'center'
                                 },
                         xaxis = {
@@ -51,21 +51,39 @@ app.layout = html.Div([
                 dbc.Col(layouts.first_card, width=4),
                 dbc.Col(html.Div(), width=1),
             ]),
+             
             html.Br(),
+             
             dbc.Row([
                 dbc.Col(html.Div(), width=1),
                 dbc.Col(
                     html.Div([
                         dcc.Graph(
                             id='g1',
-                            figure=_create_fig()),
-                        dcc.Interval(
-                            id='interval-component',
-                            interval=1*500, # in milliseconds
-                            n_intervals=0
+                            figure=_create_fig("Graph")),
+                            dcc.Interval(
+                                    id='interval-component',
+                                    interval=1*500, # in milliseconds
+                                    n_intervals=0
                         ),
                     ]),
                 width =10,
+                className = "bg-light border border-dark"
+                )
+            ]),
+
+            html.Br(),
+             
+            dbc.Row([
+                dbc.Col(html.Div(), width=1),
+                dbc.Col(
+                    html.Div([
+                        dcc.Graph(
+                            id='ENN',
+                            figure=_create_fig("Graph")
+                        ),
+                    ]),
+                width =5,
                 className = "bg-light border border-dark"
                 )
             ]),
@@ -74,10 +92,11 @@ app.layout = html.Div([
 
 @app.callback(
     dash.dependencies.Output('g1', 'figure'),
-    dash.dependencies.Input('interval-component', 'n_intervals'))
-
+    dash.dependencies.Output('ENN', 'figure'),
+    dash.dependencies.Input('interval-component', 'n_intervals')
+)
 def refresh_data(n_clicks):
-    return _create_fig()
+    return _create_fig("ENH"), _create_fig("ENZ")
 
 
 if __name__ == "__main__":
