@@ -102,17 +102,23 @@ app.layout = html.Div([
             html.Br(),
              
             dbc.Row([
-                dbc.Col(html.Div(), width=3),
+                dbc.Col(html.Div(), width=1),
                 dbc.Col(
                     html.Div([
                         dcc.Graph(
                             id='g3',
                             figure=_create_fig("ENE")
-                        ),
-                    ]),
-                width =6,
-                className = "bg-light border border-dark"
-                )
+                            ),
+                        ]),
+                    width =5,
+                    className = "bg-light border border-dark"
+                ),
+                dbc.Col(
+                    html.Div(
+                    ),
+                    width=5,
+                    className = "bg-light border border-dark"
+                ),
             ]),
 ], className = "bg-secondary")
 
@@ -125,7 +131,7 @@ app.layout = html.Div([
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
 def refresh_data(n_clicks):
-    return _create_fig('ENN'), _create_fig('ENZ'), _create_fig('EHZ'), _create_fig('ENE')
+    return _create_fig('EHZ'), _create_fig('ENZ'), _create_fig('ENN'), _create_fig('ENE')
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)

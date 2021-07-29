@@ -17,7 +17,7 @@ class Channel():
     def __init__(self, name):
         self.name = name
         self.path = "data/" + name + ".csv"
-        self.datapoints = 0
+        self.datapoints = 0.0
         self.create_clear()
         self.add_value(0)
         
@@ -27,7 +27,7 @@ class Channel():
 
     def add_value(self, elem):
         append_list_as_row(self.path, [self.datapoints, elem])
-        self.datapoints += 1
+        self.datapoints +=0.01
         
 
 def append_list_as_row(file_name, list_of_elem):
@@ -55,8 +55,9 @@ def main():
         msg = getMsg()
         for channel in channels:
             if channel.name == msg[0]:
-                channel.add_value(msg[3])
-                print(msg[3])
+                for point in msg[2:]:
+                    channel.add_value(point)
+                    print(point)
 main()    
         
     
