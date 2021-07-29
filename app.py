@@ -30,6 +30,7 @@ def _create_fig(channel): #Create graph
                         yaxis = {
                                  'title':'Counts'
                                 },
+                        height = 400,
                         autosize = True
                        )
     return go.Figure(data=go.Scatter(
@@ -63,7 +64,7 @@ app.layout = html.Div([
                             figure=_create_fig("ENN")),
                             dcc.Interval(
                                     id='interval-component',
-                                    interval=1*500, # in milliseconds
+                                    interval=1000, # in milliseconds
                                     n_intervals=0
                         ),
                     ]),

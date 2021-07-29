@@ -3,7 +3,6 @@ import time
 import random
 import math as maths
 import socket
-import numpy as np
 import pandas as pd
 
 serverAddressPort = ("152.67.115.238", 20001)
@@ -27,7 +26,7 @@ class Channel():
 
     def add_value(self, elem):
         append_list_as_row(self.path, [self.datapoints, elem])
-        self.datapoints +=0.01
+        self.datapoints += 0.005
         
 
 def append_list_as_row(file_name, list_of_elem):
@@ -50,8 +49,7 @@ def main():
     for channel in channels:
         print(channel.name)
         
-    running = True
-    while running == True:
+    while 1:
         msg = getMsg()
         for channel in channels:
             if channel.name == msg[0]:
