@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 import csv
 from dash_bootstrap_templates import load_figure_template
 import layouts
+import plotly.express as px
 load_figure_template("lux")
 app = dash.Dash(
     __name__,
@@ -15,7 +16,10 @@ app = dash.Dash(
     external_stylesheets=[dbc.themes.LUX]
 )
 
-
+def _tdfig():
+    df = px.data.gapminder().query("country=='Brazil'")
+    fig = px.line_3d(df, x="gdpPercap", y="pop", z="year")
+    return fig
 def _create_fig(channel): #Create graph 
     df = pd.read_csv('data/' + channel + '.csv') #Read data from data.csv
     df.columns=['x','y']         
@@ -63,7 +67,7 @@ app.layout = html.Div([
                             figure=_create_fig("ENN")),
                             dcc.Interval(
                                     id='interval-component',
-                                    interval=1*500, # in milliseconds
+                                    interval=1*0, # in milliseconds
                                     n_intervals=0
                         ),
                     ]),
@@ -108,8 +112,13 @@ app.layout = html.Div([
                         dcc.Graph(
                             id='g3',
                             figure=_create_fig("ENE")
-                            ),
-                        ]),
+                        ),
+                        dcc.Graph(
+                                id='3ed',
+                                figure=_tdfig()
+                                ),
+                    ]),
+                                        
                     width =5,
                     className = "bg-light border border-dark"
                 ),
@@ -121,6 +130,7 @@ app.layout = html.Div([
                 ),
             ]),
 ], className = "bg-secondary")
+
 
 
 @app.callback(
