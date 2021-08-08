@@ -43,7 +43,7 @@ def _create_fig(channel): #Create graph
                      layout = layout
                      )
 
-
+interval = 1000
 
 app.layout = html.Div([
              layouts.navbar,
@@ -67,7 +67,7 @@ app.layout = html.Div([
                             figure=_create_fig("ENN")),
                             dcc.Interval(
                                     id='interval-component',
-                                    interval=1*0, # in milliseconds
+                                    interval=1*interval, # in milliseconds
                                     n_intervals=0
                         ),
                     ]),
@@ -90,17 +90,18 @@ app.layout = html.Div([
                 width =5,
                 className = "bg-light border border-dark"
                 ),
-                dbc.Col(html.Div(), width=.5),
-                dbc.Col(
-                    html.Div([
-                        dcc.Graph(
-                            id='g2',
-                            figure=_create_fig("EHZ")
-                        ),
-                    ]),
-                width =5,
-                className = "bg-light border border-dark"
-                )
+                dbc.Col(html.Div([
+                    dcc.Dropdown(
+                        id = "updatedropdown",
+                        options=[
+                            {'label': 'Never', 'value': '99999999'},
+                            {'label': 'Half a second', 'value': '500'},
+                            {'label': 'One second', 'value': '1000'},
+                        ],
+                        value='500',
+                        clearable=False
+                    )
+                ]), width=.5),
             ]),
 
             html.Br(),
@@ -109,10 +110,6 @@ app.layout = html.Div([
                 dbc.Col(html.Div(), width=1),
                 dbc.Col(
                     html.Div([
-                        dcc.Graph(
-                            id='g3',
-                            figure=_create_fig("ENE")
-                        ),
                         dcc.Graph(
                                 id='3ed',
                                 figure=_tdfig()
@@ -132,16 +129,19 @@ app.layout = html.Div([
 ], className = "bg-secondary")
 
 
+@app.callback(
+    dash.dependencies.Output('interval-component', 'interval'),
+    [dash.dependencies.Input('updatedropdown', 'value')])
+def refresh_update_speed(value):
+    return int(value)
 
 @app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
     dash.dependencies.Output('g1', 'figure'),
-    dash.dependencies.Output('g2', 'figure'),
-    dash.dependencies.Output('g3', 'figure'),
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
 def refresh_data(n_clicks):
-    return _create_fig('EHZ'), _create_fig('ENZ'), _create_fig('ENN'), _create_fig('ENE')
+    return _create_fig('EHZ'), _create_fig('ENZ'),
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
