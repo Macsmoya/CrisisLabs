@@ -8,6 +8,8 @@ import csv
 from dash_bootstrap_templates import load_figure_template
 import layouts
 import plotly.express as px
+import math as maths
+
 load_figure_template("lux")
 app = dash.Dash(
     __name__,
@@ -92,10 +94,11 @@ app.layout = html.Div([
                                 ],
                                 value='500',
                                 clearable=False
-                            )
+                            ),
+                            html.Br(),
+                            html.Div(id = 'data-output')
                         ]),
-                        width=3
-                        
+                        width=5
                      ),
                 ]),
                 html.Br(),           
@@ -124,9 +127,15 @@ def refresh_update_speed(value):
     dash.dependencies.Output('data-output', 'children'),
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
+
+
+
 def refresh_data(n_clicks):
-    data_out = str(get_dataframe('EHZ').tail(20))
-    return _create_fig('EHZ'), _create_fig('ENZ'), data_out
+    data_out = get_dataframe('EHZ').tail(10)
+
+            
+            
+    return _create_fig('EHZ'), _create_fig('ENZ'), str(data_out['y'])
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
