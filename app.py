@@ -96,7 +96,12 @@ app.layout = html.Div([
                                 clearable=False
                             ),
                             html.Br(),
-                            html.Div(id = 'data-output')
+                            dcc.Textarea(
+                                id='data-output',
+                                disabled=True,
+                                value='No data yet!',
+                                style={'width': '100%', 'height': 300},
+                            )
                         ]),
                         width=5
                      ),
@@ -114,7 +119,6 @@ app.layout = html.Div([
                 ]),
 ], className = "bg-secondary")
 
-lastquake = []
 
 @app.callback(
     dash.dependencies.Output('interval-component', 'interval'),
@@ -122,10 +126,11 @@ lastquake = []
 def refresh_update_speed(value):
     return int(value)
 
+lastquake = []
 @app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
     dash.dependencies.Output('g1', 'figure'),
-    dash.dependencies.Output('data-output', 'children'),
+    dash.dependencies.Output('data-output', 'value'),
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
 
@@ -133,20 +138,9 @@ def refresh_data(n_clicks):
     last_packet = get_dataframe('EHZ').tail(25)
     for val in last_packet['y']:
         if val > 20000:
-            pass
-            """
-            try:
-                if t.time < t_end:
-                    lastquake.append(val)
-                else:
-                    error()
-            except:
-                    t_end = t.time() + 2
-                    lastquake.append(False)
-                    lastquake.append(val)
-            """
+                lastquake.append(last_packet)
             
-    return _create_fig('EHZ'), _create_fig('ENZ'), str(last_packet['y'])
+    return _create_fig('EHZ'), _create_fig('ENZ'), "  " + str(lastquake)[1:-1]
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
