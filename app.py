@@ -93,10 +93,15 @@ app.layout = html.Div([
                                     {'label': 'One second', 'value': '1000'},
                                 ],
                                 value='500',
-                                clearable=False
+                                clearable=False,
                             ),
                             html.Br(),
-                            html.Div(id = 'data-output')
+                            dcc.Textarea(
+                                id='data-output',
+                                disabled=True,
+                                value='No data yet!',
+                                style={'width': '50%', 'height': 400},
+                            ),
                         ]),
                         width=5
                      ),
@@ -125,7 +130,7 @@ def refresh_update_speed(value):
 @app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
     dash.dependencies.Output('g1', 'figure'),
-    dash.dependencies.Output('data-output', 'children'),
+    dash.dependencies.Output('data-output', 'value'),
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
 
@@ -146,7 +151,7 @@ def refresh_data(n_clicks):
                     lastquake.append(val)
             """
             
-    return _create_fig('EHZ'), _create_fig('ENZ'), str(last_packet['y'])
+    return _create_fig('EHZ'), _create_fig('ENZ'), "      " + str(last_packet)[1:-1]
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
