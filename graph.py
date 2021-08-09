@@ -82,6 +82,7 @@ def main():
         for channel in channels:
             if channel.name == msg[0]:
                 channel.addpacket(msg[1], msg[2:])
+                
 
 main()    
         

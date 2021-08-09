@@ -9,7 +9,7 @@ from dash_bootstrap_templates import load_figure_template
 import layouts
 import plotly.express as px
 import math as maths
-
+import time as t
 load_figure_template("lux")
 app = dash.Dash(
     __name__,
@@ -114,6 +114,7 @@ app.layout = html.Div([
                 ]),
 ], className = "bg-secondary")
 
+lastquake = []
 
 @app.callback(
     dash.dependencies.Output('interval-component', 'interval'),
@@ -128,14 +129,24 @@ def refresh_update_speed(value):
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
 
-
-
 def refresh_data(n_clicks):
-    data_out = get_dataframe('EHZ').tail(10)
-
+    last_packet = get_dataframe('EHZ').tail(25)
+    for val in last_packet['y']:
+        if val > 20000:
+            pass
+            """
+            try:
+                if t.time < t_end:
+                    lastquake.append(val)
+                else:
+                    error()
+            except:
+                    t_end = t.time() + 2
+                    lastquake.append(False)
+                    lastquake.append(val)
+            """
             
-            
-    return _create_fig('EHZ'), _create_fig('ENZ'), str(data_out['y'])
+    return _create_fig('EHZ'), _create_fig('ENZ'), str(last_packet['y'])
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
