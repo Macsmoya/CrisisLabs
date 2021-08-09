@@ -85,6 +85,8 @@ app.layout = html.Div([
                         ),
                     dbc.Col(
                         html.Div([
+                            html.Br(),
+                            html.H5('Update interval', className = "card-subtitle"),
                             dcc.Dropdown(
                                 id = "updatedropdown",
                                 options=[
@@ -93,15 +95,16 @@ app.layout = html.Div([
                                     {'label': 'One second', 'value': '1000'},
                                 ],
                                 value='500',
-                                clearable=False
+                                clearable=False,
                             ),
                             html.Br(),
                             dcc.Textarea(
                                 id='data-output',
                                 disabled=True,
                                 value='No data yet!',
-                                style={'width': '100%', 'height': 300},
-                            )
+                                style={'width': '50%', 'height': 400},
+                            ),
+                            html.Br(),
                         ]),
                         width=5
                      ),
@@ -119,6 +122,7 @@ app.layout = html.Div([
                 ]),
 ], className = "bg-secondary")
 
+lastquake = []
 
 @app.callback(
     dash.dependencies.Output('interval-component', 'interval'),
@@ -126,7 +130,6 @@ app.layout = html.Div([
 def refresh_update_speed(value):
     return int(value)
 
-lastquake = []
 @app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
     dash.dependencies.Output('g1', 'figure'),
@@ -138,9 +141,20 @@ def refresh_data(n_clicks):
     last_packet = get_dataframe('EHZ').tail(25)
     for val in last_packet['y']:
         if val > 20000:
-                lastquake.append(last_packet)
+            pass
+            """
+            try:
+                if t.time < t_end:
+                    lastquake.append(val)
+                else:
+                    error()
+            except:
+                    t_end = t.time() + 2
+                    lastquake.append(False)
+                    lastquake.append(val)
+            """
             
-    return _create_fig('EHZ'), _create_fig('ENZ'), "  " + str(lastquake)[1:-1]
+    return _create_fig('EHZ'), _create_fig('ENZ'), "      " + str(last_packet)[1:-1]
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
