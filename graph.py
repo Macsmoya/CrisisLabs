@@ -28,10 +28,15 @@ class Channel():
         f.close()
 
     def addpacket(self, time, elems):
-        data = []
-        while i < len(elems):
-            data.append(float(time) - self.start_time + i * 0.1, elems[i])
-            i += 1
+        detrended_elems = detrend(self.last_value, elems) #Detrend data
+        self.last_value = elems[-1]
+        
+        data = []                                         #Give each datapoint timestamps
+        time_since_start = float(time) - float(self.start_time)
+        for i in range(0, len(elems)):
+            data.append([time_since_start + i * 0.01, detrended_elems[i]])
+            
+
         #data.append([float(time) - self.start_time, float(self.last_value) - float(elems[0])])
         #i = 1
         #while i < len(elems) - 1:
@@ -41,7 +46,12 @@ class Channel():
         # data = enumerate(elems)  
         append_list_as_rows(self.path, data)
         self.datapoints +=0.01
-        
+     
+def detrend(start, lst):
+    if len(lst) == 0:
+        return lst
+    else:
+        return [float(lst[0]) - float(start)] + detrend(lst[0], lst[1:])
 
 def append_list_as_rows(file_name, list_of_elem):
     # Open file in append mode

@@ -16,13 +16,14 @@ app = dash.Dash(
     external_stylesheets=[dbc.themes.LUX]
 )
 
-def _tdfig():
-    df = px.data.gapminder().query("country=='Brazil'")
-    fig = px.line_3d(df, x="gdpPercap", y="pop", z="year")
-    return fig
-def _create_fig(channel): #Create graph 
+
+def get_dataframe(channel):
     df = pd.read_csv('data/' + channel + '.csv') #Read data from data.csv
     df.columns=['x','y']
+    return df
+    
+def _create_fig(channel): #Create graph 
+    df = get_dataframe(channel)
     currentDf = df.tail(1000)
     layout = go.Layout(
                         title = {
@@ -47,86 +48,67 @@ def _create_fig(channel): #Create graph
 interval = 1000
 
 app.layout = html.Div([
-             layouts.navbar,
-             html.Br(),
-             dbc.Row([
-                dbc.Col(html.Div(), width=1),
-                dbc.Col(layouts.first_card, width=4),
-                dbc.Col(html.Div(), width=2),
-                dbc.Col(layouts.first_card, width=4),
-                dbc.Col(html.Div(), width=1),
-            ]),
-             
-            html.Br(),
-             
-            dbc.Row([
-                dbc.Col(html.Div(), width=1),
-                dbc.Col(
-                    html.Div([
-                        dcc.Graph(
-                            id='bigGraph',
-                            figure=_create_fig("ENN")),
+                layouts.navbar,
+                html.Br(),
+                dbc.Row([
+                    dbc.Col(html.Div(), width=1),
+                    dbc.Col(
+                        html.Div([
+                            dcc.Graph(
+                                id='bigGraph',
+                               figure=_create_fig("ENN")
+                            ),
                             dcc.Interval(
-                                    id='interval-component',
-                                    interval=1*interval, # in milliseconds
+                                id='interval-component',
+                                interval=1*interval, # in milliseconds
                                     n_intervals=0
+                            ),
+                        ]),
+                        width =10,
+                        className = "bg-light border border-dark"
+                        )
+                ]),
+                html.Br(), 
+                dbc.Row([
+                    dbc.Col(html.Div(), width=1),
+                    dbc.Col(
+                        html.Div([
+                            dcc.Graph(
+                                id='g1',
+                                figure=_create_fig("ENZ")
+                            ),
+                        ]),
+                        width =5,
+                        className = "bg-light border border-dark"
                         ),
-                    ]),
-                width =10,
-                className = "bg-light border border-dark"
-                )
-            ]),
-
-            html.Br(),
-             
-            dbc.Row([
-                dbc.Col(html.Div(), width=1),
-                dbc.Col(
-                    html.Div([
-                        dcc.Graph(
-                            id='g1',
-                            figure=_create_fig("ENZ")
+                    dbc.Col(
+                        html.Div([
+                            dcc.Dropdown(
+                                id = "updatedropdown",
+                                options=[
+                                    {'label': 'Never', 'value': '99999999'},
+                                    {'label': 'Half a second', 'value': '500'},
+                                    {'label': 'One second', 'value': '1000'},
+                                ],
+                                value='500',
+                                clearable=False
+                            )
+                        ]),
+                        width=3
+                        
+                     ),
+                ]),
+                html.Br(),           
+                dbc.Row([
+                    dbc.Col(html.Div(), width=1),
+                    dbc.Col(
+                        html.Div(
                         ),
-                    ]),
-                width =5,
-                className = "bg-light border border-dark"
-                ),
-                dbc.Col(html.Div([
-                    dcc.Dropdown(
-                        id = "updatedropdown",
-                        options=[
-                            {'label': 'Never', 'value': '99999999'},
-                            {'label': 'Half a second', 'value': '500'},
-                            {'label': 'One second', 'value': '1000'},
-                        ],
-                        value='500',
-                        clearable=False
-                    )
-                ]), width=.5),
-            ]),
-
-            html.Br(),
-             
-            dbc.Row([
-                dbc.Col(html.Div(), width=1),
-                dbc.Col(
-                    html.Div([
-                        dcc.Graph(
-                                id='3ed',
-                                figure=_tdfig()
-                                ),
-                    ]),
-                                        
-                    width =5,
-                    className = "bg-light border border-dark"
-                ),
-                dbc.Col(
-                    html.Div(
+                        id = 'a',
+                        width=5,
+                        className = "bg-light border border-dark"
                     ),
-                    width=5,
-                    className = "bg-light border border-dark"
-                ),
-            ]),
+                ]),
 ], className = "bg-secondary")
 
 
@@ -139,10 +121,12 @@ def refresh_update_speed(value):
 @app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
     dash.dependencies.Output('g1', 'figure'),
+    dash.dependencies.Output('data-output', 'children'),
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
 def refresh_data(n_clicks):
-    return _create_fig('EHZ'), _create_fig('ENZ'),
+    data_out = str(get_dataframe('EHZ').tail(20))
+    return _create_fig('EHZ'), _create_fig('ENZ'), data_out
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
