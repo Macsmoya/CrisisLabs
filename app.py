@@ -10,6 +10,8 @@ import layouts
 import plotly.express as px
 import math as maths
 import time as t
+import alarm
+alarm.triggerReset()
 load_figure_template("lux")
 app = dash.Dash(
     __name__,
@@ -100,6 +102,7 @@ app.layout = html.Div([
                                 value='500',
                                 clearable=False,
                             ),
+                            
                             html.Br(),
                             html.H5('Number of datapoints', className = "card-subtitle"),
                             dcc.Slider(
@@ -110,6 +113,16 @@ app.layout = html.Div([
                                 value=1000,
                             ),
                             html.Div(id='slider-output-container'),
+                            html.Br(),
+                            html.H5('Threshold', className = "card-subtitle"),
+                            dcc.Slider(
+                                id='threshold-slider',
+                                min=10,
+                                max=10000000,
+                                step=100,
+                                value=3000000,
+                            ),
+                            html.Div(id='threshold-container'),
                             html.Br(),
                            
                         ]),
@@ -128,9 +141,7 @@ app.layout = html.Div([
                         width=2
                     ),
                     dbc.Col(
-                        html.Div([
-                           
-                        ]),
+                        html.Div(id="alert-div"),
                         width=3,
                         className = "bg-light border border-dark"
                      ),
@@ -153,30 +164,31 @@ def update_output(value):
     return 'Currently selected: {}'.format(value)
 
 @app.callback(
+    dash.dependencies.Output('threshold-container', 'children'),
+    [dash.dependencies.Input('threshold-slider', 'value')])
+def update_output(value):
+    return 'Currently selected: {}'.format(value)
+
+last_quake = [20]
+@app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
     dash.dependencies.Output('data-output', 'value'),
     dash.dependencies.Input('interval-component', 'n_intervals'),
     dash.dependencies.Input('range-slider', 'value'),
-    dash.dependencies.Input('channeldropdown', 'value')
+    dash.dependencies.Input('channeldropdown', 'value'),
+    dash.dependencies.Input('threshold-slider', 'value')
     )
-def refresh_data(n_clicks, datapoints, channel):
+def refresh_data(n_clicks, datapoints, channel, threshold):
     last_packet = get_dataframe(channel).tail(25)
+    time_since_quake = last_quake[0]
     for val in last_packet['y']:
-        if val > 20000:
-            pass
-            """
-            try:
-                if t.time < t_end:
-                    lastquake.append(val)
-                else:
-                    error()
-            except:
-                    t_end = t.time() + 2
-                    lastquake.append(False)
-                    lastquake.append(val)
-            """
+        if abs(val) > threshold:
+            alarm.triggerAlarm()
+        else:
+            alarm.triggerReset()
             
+                
     return _create_fig(channel, datapoints), "      " + str(last_packet)[1:-1]
 
 if __name__ == "__main__":
-    app.run_server(host='127.0.0.1', debug=True, port=8050)
+    app.run_server(host='127.0.0.1', debug=True, port=8040)

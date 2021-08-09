@@ -16,7 +16,7 @@
 
 void setup() {
   Serial.begin(9600);
-  start("highbury8-2014", "735db5bac2"); // Wifi details connec to
+  start("WCGuest 2", "froglegs"); // Wifi details connec to
 
   pinMode(LED, OUTPUT);
 }

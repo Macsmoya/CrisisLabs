@@ -63,7 +63,6 @@ def getMsg():
         
 def main():
     init_msg = getMsg()
-    
     channels = [ Channel(channel_name, float(init_msg[1])) for channel_name in ['ENN', 'ENZ', 'EHZ', 'ENE']]
     for channel in channels:
         print(channel.name)
@@ -71,6 +70,7 @@ def main():
     running = True
     while running == True:
         msg = getMsg()
+        print(msg)
         for channel in channels:
             if channel.name == msg[0]:
                 channel.addpacket(msg[1], msg[2:])
