@@ -24,9 +24,9 @@ def get_dataframe(channel):
     df.columns=['x','y']
     return df
     
-def _create_fig(channel): #Create graph 
+def _create_fig(channel, datapoints): #Create graph 
     df = get_dataframe(channel)
-    currentDf = df.tail(1000)
+    currentDf = df.tail(datapoints)
     layout = go.Layout(
                         title = {
                                  'text':channel,
@@ -58,7 +58,7 @@ app.layout = html.Div([
                         html.Div([
                             dcc.Graph(
                                 id='bigGraph',
-                               figure=_create_fig("ENN")
+                               figure=_create_fig("ENN", 1000)
                             ),
                             dcc.Interval(
                                 id='interval-component',
@@ -76,6 +76,19 @@ app.layout = html.Div([
                     dbc.Col(
                         html.Div([
                             html.Br(),
+                            html.H5('Channel', className = "card-subtitle"),
+                            dcc.Dropdown(
+                                id = "channeldropdown",
+                                options=[
+                                    {'label': 'EHZ', 'value': 'EHZ'},
+                                    {'label': 'ENZ', 'value': 'ENZ'},
+                                    {'label': 'ENN', 'value': 'ENN'},
+                                    {'label': 'ENE', 'value': 'ENE'},
+                                ],
+                                value='EHZ',
+                                clearable=False,
+                            ),
+                            html.Br(),
                             html.H5('Update interval', className = "card-subtitle"),
                             dcc.Dropdown(
                                 id = "updatedropdown",
@@ -87,6 +100,16 @@ app.layout = html.Div([
                                 value='500',
                                 clearable=False,
                             ),
+                            html.Br(),
+                            html.H5('Number of datapoints', className = "card-subtitle"),
+                            dcc.Slider(
+                                id='range-slider',
+                                min=10,
+                                max=10000,
+                                step=1,
+                                value=1000,
+                            ),
+                            html.Div(id='slider-output-container'),
                             html.Br(),
                            
                         ]),
@@ -102,20 +125,17 @@ app.layout = html.Div([
                                 style={'width': '100%', 'height': 400},
                             ),
                         ]),
-                        width=5
+                        width=2
+                    ),
+                    dbc.Col(
+                        html.Div([
+                           
+                        ]),
+                        width=3,
+                        className = "bg-light border border-dark"
                      ),
                 ]),
-                html.Br(),           
-                dbc.Row([
-                    dbc.Col(html.Div(), width=1),
-                    dbc.Col(
-                        html.Div(
-                        ),
-                        id = 'a',
-                        width=5,
-                        className = "bg-light border border-dark"
-                    ),
-                ]),
+                html.Br()
 ], className = "bg-secondary")
 
 lastquake = []
@@ -127,13 +147,20 @@ def refresh_update_speed(value):
     return int(value)
 
 @app.callback(
+    dash.dependencies.Output('slider-output-container', 'children'),
+    [dash.dependencies.Input('range-slider', 'value')])
+def update_output(value):
+    return 'Currently selected: {}'.format(value)
+
+@app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
     dash.dependencies.Output('data-output', 'value'),
-    dash.dependencies.Input('interval-component', 'n_intervals')
-)
-
-def refresh_data(n_clicks):
-    last_packet = get_dataframe('EHZ').tail(25)
+    dash.dependencies.Input('interval-component', 'n_intervals'),
+    dash.dependencies.Input('range-slider', 'value'),
+    dash.dependencies.Input('channeldropdown', 'value')
+    )
+def refresh_data(n_clicks, datapoints, channel):
+    last_packet = get_dataframe(channel).tail(25)
     for val in last_packet['y']:
         if val > 20000:
             pass
@@ -149,7 +176,7 @@ def refresh_data(n_clicks):
                     lastquake.append(val)
             """
             
-    return _create_fig('EHZ'), "      " + str(last_packet)[1:-1]
+    return _create_fig(channel, datapoints), "      " + str(last_packet)[1:-1]
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
