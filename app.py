@@ -22,7 +22,8 @@ def _tdfig():
     return fig
 def _create_fig(channel): #Create graph 
     df = pd.read_csv('data/' + channel + '.csv') #Read data from data.csv
-    df.columns=['x','y']         
+    df.columns=['x','y']
+    currentDf = df.tail(1000)
     layout = go.Layout(
                         title = {
                                  'text':channel,
@@ -37,8 +38,8 @@ def _create_fig(channel): #Create graph
                         autosize = True
                        )
     return go.Figure(data=go.Scatter(
-                                     x=df['x'],
-                                     y=df['y'],
+                                     x=currentDf['x'],
+                                     y=currentDf['y'],
                                      ), 
                      layout = layout
                      )

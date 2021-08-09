@@ -14,19 +14,31 @@ UDPClientSocket.sendto(b"connect", serverAddressPort)
 
 
 class Channel():
-    def __init__(self, name):
+    def __init__(self, name, start_time):
         self.name = name
         self.path = "data/" + name + ".csv"
         self.datapoints = 0.0
         self.create_clear()
-        self.addpacket([[0,0]])
+        self.start_time = start_time
+        self.last_value = 0
+        self.addpacket(0, [0])
         
     def create_clear(self):
         f = open(self.path, "w+")
         f.close()
 
-    def addpacket(self, elem):
-        data = enumerate(elem)  
+    def addpacket(self, time, elems):
+        data = []
+        while i < len(elems):
+            data.append(float(time) - self.start_time + i * 0.1, elems[i])
+            i += 1
+        #data.append([float(time) - self.start_time, float(self.last_value) - float(elems[0])])
+        #i = 1
+        #while i < len(elems) - 1:
+        #    data.append([float(time) - self.start_time + i * 0.01, float(elems[i + 1]) - float(elems[i])])
+        #    i += 1
+        #self.last_value = elems[len(elems) - 1]
+        # data = enumerate(elems)  
         append_list_as_rows(self.path, data)
         self.datapoints +=0.01
         
@@ -48,7 +60,9 @@ def getMsg():
     return msg
         
 def main():
-    channels = [ Channel(channel_name) for channel_name in ['ENN', 'ENZ', 'EHZ', 'ENE']]
+    init_msg = getMsg()
+    
+    channels = [ Channel(channel_name, float(init_msg[1])) for channel_name in ['ENN', 'ENZ', 'EHZ', 'ENE']]
     for channel in channels:
         print(channel.name)
         
@@ -57,7 +71,7 @@ def main():
         msg = getMsg()
         for channel in channels:
             if channel.name == msg[0]:
-                channel.addpacket(msg[2:])
+                channel.addpacket(msg[1], msg[2:])
 
 main()    
         
