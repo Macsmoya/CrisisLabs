@@ -85,6 +85,8 @@ app.layout = html.Div([
                         ),
                     dbc.Col(
                         html.Div([
+                            html.Br(),
+                            html.H5('Update interval', className = "card-subtitle"),
                             dcc.Dropdown(
                                 id = "updatedropdown",
                                 options=[
@@ -102,6 +104,7 @@ app.layout = html.Div([
                                 value='No data yet!',
                                 style={'width': '50%', 'height': 400},
                             ),
+                            html.Br(),
                         ]),
                         width=5
                      ),
