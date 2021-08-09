@@ -75,16 +75,6 @@ app.layout = html.Div([
                     dbc.Col(html.Div(), width=1),
                     dbc.Col(
                         html.Div([
-                            dcc.Graph(
-                                id='g1',
-                                figure=_create_fig("ENZ")
-                            ),
-                        ]),
-                        width =5,
-                        className = "bg-light border border-dark"
-                        ),
-                    dbc.Col(
-                        html.Div([
                             html.Br(),
                             html.H5('Update interval', className = "card-subtitle"),
                             dcc.Dropdown(
@@ -98,13 +88,19 @@ app.layout = html.Div([
                                 clearable=False,
                             ),
                             html.Br(),
+                           
+                        ]),
+                        width =5,
+                        className = "bg-light border border-dark"
+                        ),
+                    dbc.Col(
+                        html.Div([
                             dcc.Textarea(
                                 id='data-output',
                                 disabled=True,
                                 value='No data yet!',
-                                style={'width': '50%', 'height': 400},
+                                style={'width': '100%', 'height': 400},
                             ),
-                            html.Br(),
                         ]),
                         width=5
                      ),
@@ -132,7 +128,6 @@ def refresh_update_speed(value):
 
 @app.callback(
     dash.dependencies.Output('bigGraph', 'figure'),
-    dash.dependencies.Output('g1', 'figure'),
     dash.dependencies.Output('data-output', 'value'),
     dash.dependencies.Input('interval-component', 'n_intervals')
 )
@@ -154,7 +149,7 @@ def refresh_data(n_clicks):
                     lastquake.append(val)
             """
             
-    return _create_fig('EHZ'), _create_fig('ENZ'), "      " + str(last_packet)[1:-1]
+    return _create_fig('EHZ'), "      " + str(last_packet)[1:-1]
 
 if __name__ == "__main__":
     app.run_server(host='127.0.0.1', debug=True, port=8050)
